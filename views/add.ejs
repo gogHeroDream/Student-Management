@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon " type="images/x-icon" href="/uploads/favicon.ico">
+    <title>添加学生</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            padding: 20px;
+        }
+
+        table {
+            margin-top: 20px;
+            border: 1px solid #333;
+            color: #333;
+            border-collapse: collapse;
+        }
+
+        table tr+tr {
+            border-top: 1px solid #333;
+        }
+
+        table td+td,
+        table th+th {
+            border-left: 1px solid #333;
+        }
+
+        table td,
+        table th {
+            line-height: 25px;
+            font-size: 14px;
+            padding-left: 5px;
+            padding-right: 5px;
+            text-align: center;
+        }
+        p{
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h5 style='font-size: 16px;line-height: 40px;'>添加学生：</h5>
+    <p>
+        学号： <input type="text" class="sid" name="sid">
+    </p>
+    <p>
+        姓名： <input type="text" class="userName" name="name">
+    </p>
+    <p>
+        性别： 
+        <input type="radio" name="sex" value="男" />男
+        <input type="radio" name="sex" value="女" />女
+    </p>
+    <p>
+        年龄： <input type="text" class="age" name="age">
+    </p>
+    <p>
+        照片： <input type="file" accept="image/*" class="picture" name="age">
+    </p>
+    <button style="padding:5px 10px;margin-top: 30px;margin-left: 50px;">提交</button>
+    <script>
+        var btn = document.querySelector('button')
+        var sid = document.querySelector('.sid')
+        var userName = document.querySelector('.userName')
+        var sexList = document.getElementsByName('sex')
+        var age = document.querySelector('.age')
+        var fileDom = document.querySelector('.picture')
+        btn.onclick=function(){
+            const obj = new FormData();
+            const file = fileDom.files
+            if (sid.value !== "") obj.append('sid', Number(sid.value))
+            obj.append('name', userName.value)
+            if (age.value !== "") obj.append('age', Number(age.value))
+            for (let i = 0; i < sexList.length; i++) {
+                if (sexList[i].checked) {
+                    obj.append('sex', sexList[i].value)
+                }
+            }
+            if (file) obj.append('pic', file[0]);
+            // return 
+            const xhr = new XMLHttpRequest()
+            xhr.open("post", './add');
+            // xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+            xhr.send(obj)
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    const data = xhr.responseText;
+                    const _data = JSON.parse(data)
+                    if(_data.code==='1') {
+                        alert('添加成功')
+                        window.location.href= '/'
+                    } else {
+                        alert('添加失败')
+                    }
+                    // setSignIn(1)
+                    // console.log(data)
+                    // resolve(data)
+                }
+            }
+        }
+    </script>
+</body>
+</html>

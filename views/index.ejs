@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link rel="shortcut icon" type="images/x-icon" href="/uploads/favicon.ico">
+    <title>学生信息列表</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            padding: 20px;
+        }
+        table{
+            margin-top: 20px;
+            border: 1px solid #333;
+            color:#333;
+            border-collapse: collapse;
+        }
+        table tr+tr{
+            border-top: 1px solid #333;
+        }
+        table td+td,table th+th{
+            border-left: 1px solid #333;
+        }
+         table td,table th{
+             line-height: 25px;
+             font-size: 14px;
+             padding-left: 5px;
+             padding-right: 5px;
+             text-align: center;
+         }
+         .handle a,.handle span{
+             color: rgb(135, 158, 222);
+             text-decoration: underline;
+         }
+    </style>
+</head>
+<body>
+    <a href="./add" target="_self">添加学生</a>
+    <table>
+        <tr>
+            <th>姓名</th>
+            <th>年龄</th>
+            <th>性别</th>
+            <th>照片</th>
+            <th>操作</th>
+        </tr>
+        <% if(students.length>0){ %>
+            <% for(var i=0; i < students.length; i++) {%>
+            <tr>
+                <td><%=students[i].name%></td>
+                <td><%=students[i].age%></td>
+                <td><%=students[i].sex%></td>
+                <% if( students[i].pic ) { %>
+                <td> <img style="margin-top:5px;margin-bottom:5px;width: 40px;height: 40px;vertical-align: middle;" src="<%=students[i].pic%>"/></td>
+                <% } else { %>
+                <td>————</td>
+                <%}%>
+                <td class='handle'>
+                    <a href="./edit/<%=students[i]._id%>">修改</a>
+                    <span class='remove-student' belong="<%=students[i]._id%>">删除</a>
+                </td>
+            </tr>
+            <% } %>
+        <%} else {%>
+            <tr>
+                <td colspan="4">暂无数据</td> 
+            </tr>
+        <%}%>
+        
+    </table>
+    <script>
+        var btns =document.querySelectorAll('.remove-student')
+        for(let i = 0;i<btns.length;i++) {
+            btns[i].onclick = function () {
+                // console.log(123)
+                const obj = {}
+                obj.id = btns[i].getAttribute('belong')
+                const xhr = new XMLHttpRequest()
+                xhr.open("post", './del/'+ obj.id);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send()
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        const data = xhr.responseText;
+                        const _data = JSON.parse(data)
+                        if(_data.code==='1') {
+                            alert('删除成功')
+                            window.location.reload() 
+                        } else {
+                            alert('删除失败')
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
